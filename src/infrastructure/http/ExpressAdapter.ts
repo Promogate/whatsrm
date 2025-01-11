@@ -1,5 +1,7 @@
-import express, { Express, Request, Response } from 'express';
+import 'express-async-errors';
+import express, { Express, NextFunction, Request, Response } from 'express';
 import { HttpServer, HttpRequest, HttpResponse } from '@core/ports/http/HttpServer';
+import cors from 'cors';
 
 export class ExpressAdapter implements HttpServer {
   private app: Express; //Verificar o motivo de não aceitar Express como tipagem
@@ -7,6 +9,9 @@ export class ExpressAdapter implements HttpServer {
   constructor() {
     this.app = express();
     this.app.use(express.json());
+    this.app.use(cors({
+      origin: [process.env.ALLOWED_CORS_ORIGINS!]
+    }))
     this.setupErrorHandler();
   }
 
@@ -46,7 +51,7 @@ export class ExpressAdapter implements HttpServer {
   }
 
   private setupErrorHandler(): void {
-    this.app.use((error: Error, req: Request, res: Response, next: any) => {
+    this.app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
       console.error('Error:', error);
       res.status(500).json({
         error: 'Internal Server Error',
