@@ -1,13 +1,13 @@
 import { CreateCustomerProps } from '@/core/domain/Customer';
+import { CreateCustomer } from '@/core/ports/usecases/CreateCustomer';
 import { HttpServer, HttpRequest, HttpResponse } from '@core/ports/http/HttpServer';
 import { MessageBroker } from '@core/ports/messaging/MessageBroker';
-import { CreateCustomerUseCase } from '@core/usecases/CreateCustomerUseCase';
 
 export class CustomerController {
   constructor(
     private readonly httpServer: HttpServer,
     private readonly messageBroker: MessageBroker,
-    private readonly createCustomerUseCase: CreateCustomerUseCase
+    private readonly createCustomerUseCase: CreateCustomer
   ) {
     this.setupRoutes();
     this.setupSubscriptions();
