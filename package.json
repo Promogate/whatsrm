@@ -20,7 +20,8 @@
 	},
 	"dependencies": {
 		"amqplib": "^0.10.5",
+		"dotenv": "^16.4.7",
 		"express": "^4.21.2",
-		"firebase-admin": "^13.0.2"
+		"firebase": "^11.1.0"
 	}
 }

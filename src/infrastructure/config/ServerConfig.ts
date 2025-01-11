@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+
 import { ExpressAdapter } from '@infrastructure/http/ExpressAdapter';
 import { RabbitMQAdapter } from '@infrastructure/messaging/RabbitMQAdapter';
 import { MessageBroker } from '@core/ports/messaging/MessageBroker';
@@ -8,8 +10,8 @@ export class ServerConfig {
   private httpServer: HttpServer;
   private messageBroker: MessageBroker;
 
-
   private constructor() {
+    dotenv.config();
     this.httpServer = new ExpressAdapter();
     this.messageBroker = new RabbitMQAdapter(process.env.RABBITMQ_URL || 'amqp://localhost');
   }
