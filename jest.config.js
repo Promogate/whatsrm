@@ -17,6 +17,7 @@ module.exports = {
   moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {
     prefix: '<rootDir>/',
   }),
+  setupFiles: ['<rootDir>/src/infrastructure/config/ModuleAlias.ts'],
   moduleDirectories: ['node_modules', '<rootDir>'],
   testMatch: [
     '**/*.spec.ts',

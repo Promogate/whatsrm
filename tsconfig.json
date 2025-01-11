@@ -9,7 +9,8 @@
       "@infrastructure/*": ["src/infrastructure/*"],
       "@interfaces/*": ["src/interfaces/*"],
       "@shared/*": ["src/shared/*"],
-      "@tests/*": ["src/tests/*"]
+      "@tests/*": ["src/tests/*"],
+      "@application/*": ["src/application/*"]
     },
     "outDir": "./dist",
     "esModuleInterop": true,

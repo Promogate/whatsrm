@@ -1,6 +1,8 @@
 {
 	"scripts": {
-		"dev": "ts-node-dev --transpile-only --ignore-watch node_modules --respawn src/app.ts",
+		"dev": "ts-node-dev --transpile-only --ignore-watch node_modules --respawn -r tsconfig-paths/register src/app.ts",
+		"start:prod": "node -r module-alias/register dist/app.js",
+		"build": "tsc",
 		"test": "jest --passWithNoTests --no-cache",
 		"test:watch": "jest --watch",
 		"test:coverage": "jest --coverage"
@@ -9,6 +11,7 @@
 		"@types/amqplib": "^0.10.6",
 		"@types/express": "^5.0.0",
 		"@types/jest": "^29.5.14",
+		"@types/module-alias": "^2.0.4",
 		"@types/node": "^22.10.5",
 		"@types/sinon": "^17.0.3",
 		"jest": "^29.7.0",
@@ -16,12 +19,23 @@
 		"ts-jest": "^29.2.5",
 		"ts-node": "^10.9.2",
 		"ts-node-dev": "^2.0.0",
+		"tsconfig-paths": "^4.2.0",
 		"typescript": "^5.7.3"
 	},
 	"dependencies": {
 		"amqplib": "^0.10.5",
 		"dotenv": "^16.4.7",
 		"express": "^4.21.2",
-		"firebase": "^11.1.0"
+		"firebase": "^11.1.0",
+		"module-alias": "^2.2.3"
+	},
+	"_moduleAliases": {
+		"@": "dist",
+		"@core": "dist/core",
+		"@infrastructure": "dist/infrastructure",
+		"@interfaces": "dist/interfaces",
+		"@shared": "dist/shared",
+		"@tests": "dist/tests",
+		"@application": "dist/application"
 	}
 }
