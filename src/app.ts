@@ -17,18 +17,13 @@ export class Application {
   private setupApplication(): void {
     try {
       const httpServer = this.serverConfig.getHttpServer();
-      const messageBroker = this.serverConfig.getMessageBroker();
 
       const customerRepository = new FirestoreCustomerRepository();
 
-      const createCustomerUseCase = new CreateCustomerUseCase(
-        customerRepository,
-        messageBroker
-      );
+      const createCustomerUseCase = new CreateCustomerUseCase(customerRepository);
 
       new CustomerController(
         httpServer,
-        messageBroker,
         createCustomerUseCase
       );
     } catch (error) {

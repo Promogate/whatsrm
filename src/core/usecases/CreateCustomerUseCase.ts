@@ -1,12 +1,10 @@
 import { CreateCustomer, CreateCustomerDTO } from '@core/ports/usecases/CreateCustomer';
 import { CustomerRepository } from '@core/ports/repositories/CustomerRepository';
-import { MessageBroker } from '@core/ports/messaging/MessageBroker';
 import { Customer } from '@core/domain/Customer';
 
 export class CreateCustomerUseCase implements CreateCustomer {
   constructor(
-    private readonly customerRepository: CustomerRepository,
-    private readonly messageBroker: MessageBroker
+    private readonly customerRepository: CustomerRepository
   ) { }
 
   async execute(data: CreateCustomerDTO): Promise<Customer> {
@@ -20,7 +18,6 @@ export class CreateCustomerUseCase implements CreateCustomer {
       phone: data.phone
     });
     await this.customerRepository.save(customer);
-    await this.messageBroker.publish('customer.created', customer.toJSON());
 
     return customer;
   }
