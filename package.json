@@ -3,7 +3,7 @@
 		"dev": "ts-node-dev --transpile-only --ignore-watch node_modules --respawn -r tsconfig-paths/register src/app.ts",
 		"start:prod": "node -r module-alias/register dist/app.js",
 		"build": "tsc",
-		"test": "jest --passWithNoTests --no-cache",
+		"test": "jest --runInBand --passWithNoTests --no-cache",
 		"test:watch": "jest --watch",
 		"test:coverage": "jest --coverage"
 	},

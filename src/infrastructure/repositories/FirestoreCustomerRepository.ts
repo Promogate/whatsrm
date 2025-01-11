@@ -44,6 +44,7 @@ export class FirestoreCustomerRepository implements CustomerRepository {
         id: doc.id,
         name: data.name,
         email: data.email,
+        password: data.password,
         phone: data.phone || null,
         createdAt: this.convertTimestampToDate(data.createdAt),
         updatedAt: this.convertTimestampToDate(data.updatedAt)
@@ -67,6 +68,7 @@ export class FirestoreCustomerRepository implements CustomerRepository {
       id: id,
       name: data.name,
       email: data.email,
+      password: data.password,
       phone: data.phone || null,
       createdAt: this.convertTimestampToDate(data.createdAt),
       updatedAt: this.convertTimestampToDate(data.updatedAt)

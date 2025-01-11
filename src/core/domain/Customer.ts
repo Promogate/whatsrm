@@ -1,7 +1,10 @@
+import bcrypt from 'bcrypt';
+
 interface CustomerProps {
   id: string;
   name: string;
   email: string;
+  password: string;
   phone?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -10,6 +13,7 @@ interface CustomerProps {
 export interface CreateCustomerProps {
   name: string;
   email: string;
+  password: string;
   phone?: string;
 }
 
@@ -17,6 +21,7 @@ export class Customer {
   private readonly id: string;
   private name: string;
   private email: string;
+  private password: string;
   private phone: string | null;
   private readonly createdAt: Date;
   private updatedAt: Date;
@@ -25,6 +30,7 @@ export class Customer {
     this.id = props.id;
     this.name = props.name;
     this.email = props.email;
+    this.password = props.password;
     this.phone = props.phone || null;
     this.createdAt = props.createdAt;
     this.updatedAt = props.updatedAt;
@@ -58,11 +64,13 @@ export class Customer {
 
   public static create(props: CreateCustomerProps): Customer {
     const now = new Date();
+    const encryptedPassword = bcrypt.hashSync(props.password, 10)
 
     const customerProps: CustomerProps = {
       id: crypto.randomUUID(),
       name: props.name,
       email: props.email,
+      password: encryptedPassword,
       phone: props.phone,
       createdAt: now,
       updatedAt: now
@@ -93,7 +101,6 @@ export class Customer {
     this.validate();
   }
 
-  // Getters para acessar as propriedades privadas
   public getId(): string {
     return this.id;
   }
@@ -104,6 +111,10 @@ export class Customer {
 
   public getEmail(): string {
     return this.email;
+  }
+
+  public getPassword(): string {
+    return this.password;
   }
 
   public getPhone(): string | null {
@@ -123,6 +134,7 @@ export class Customer {
       id: this.id,
       name: this.name,
       email: this.email,
+      password: this.password,
       phone: this.phone,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt

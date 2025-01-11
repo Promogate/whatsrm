@@ -1,7 +1,10 @@
 import { ServerConfig } from '@infrastructure/config/ServerConfig';
 import { CreateCustomerUseCase } from '@core/usecases/CreateCustomerUseCase';
 import { FirestoreCustomerRepository } from '@infrastructure/repositories/FirestoreCustomerRepository';
-import { CustomerController } from '@application/controllers/CustomController';
+import { CustomerController } from '@/application/controllers/CustomerController';
+import { JwtTokenService } from '@infrastructure/auth/auth/JwtTokenService';
+import { AuthenticateCustomerUseCase } from './core/auth/AuthenticateCustomerUseCase';
+import { AuthController } from '@application/controllers/AuthController';
 
 export class Application {
   private readonly serverConfig: ServerConfig;
@@ -20,8 +23,21 @@ export class Application {
 
       const customerRepository = new FirestoreCustomerRepository();
 
-      const createCustomerUseCase = new CreateCustomerUseCase(customerRepository);
+      const jwtTokenService = new JwtTokenService(
+        process.env.JWT_SECRET!,
+        parseInt(process.env.JWT_EXPIRES_IN || '3600')
+      );
 
+      const createCustomerUseCase = new CreateCustomerUseCase(customerRepository);
+      const authenticateCustomerUseCase = new AuthenticateCustomerUseCase(
+        customerRepository,
+        jwtTokenService
+      );
+
+      new AuthController(
+        httpServer,
+        authenticateCustomerUseCase
+      );
       new CustomerController(
         httpServer,
         createCustomerUseCase

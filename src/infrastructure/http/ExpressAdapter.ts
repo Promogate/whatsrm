@@ -44,7 +44,6 @@ export class ExpressAdapter implements HttpServer {
   public async listen(port: number): Promise<void> {
     return new Promise((resolve) => {
       this.app.listen(port, () => {
-        console.log(`Server running on port ${port}`);
         resolve();
       });
     });

@@ -15,6 +15,7 @@ export class CreateCustomerUseCase implements CreateCustomer {
     const customer = Customer.create({
       name: data.name,
       email: data.email,
+      password: data.password,
       phone: data.phone
     });
     await this.customerRepository.save(customer);

@@ -18,6 +18,7 @@ describe('CreateCustomerUseCase', () => {
     const customerData = {
       name: 'John Doe',
       email: 'john@example.com',
+      password: '123456',
       phone: '+1234567890'
     };
     customerRepository.findByEmail.resolves(null);
@@ -34,9 +35,14 @@ describe('CreateCustomerUseCase', () => {
     // Arrange
     const customerData = {
       name: 'John Doe',
-      email: 'existing@example.com'
+      email: 'existing@example.com',
+      password: '123456'
     };
-    customerRepository.findByEmail.resolves(Customer.create({ name: 'Existing user', email: customerData.email }));
+    customerRepository.findByEmail.resolves(Customer.create({ 
+      name: 'Existing user', 
+      email: customerData.email,
+      password: '123456'
+    }));
 
     // Act & Assert
     await expect(createCustomerUseCase.execute(customerData))
