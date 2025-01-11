@@ -10,7 +10,7 @@ export class Application {
   constructor() {
     this.serverConfig = ServerConfig.getInstance();
     this.port = parseInt(process.env.PORT || '3000');
-    
+
     this.setupApplication();
   }
 
@@ -27,35 +27,21 @@ export class Application {
       );
 
       new CustomerController(
-        httpServer, 
+        httpServer,
         messageBroker,
         createCustomerUseCase
       );
-
-      this.setupErrorHandling(httpServer);
-
     } catch (error) {
       console.error('Error setting up application:', error);
       process.exit(1);
     }
   }
 
-  private setupErrorHandling(httpServer: any): void {
-    process.on('unhandledRejection', (reason: Error) => {
-      console.error('Unhandled Rejection:', reason);
-    });
-
-    process.on('uncaughtException', (error: Error) => {
-      console.error('Uncaught Exception:', error);
-      process.exit(1);
-    });
-  }
-
   public async start(): Promise<void> {
     try {
       const httpServer = this.serverConfig.getHttpServer();
       await httpServer.listen(this.port);
-      
+
       console.log(`Server running on port ${this.port}`);
 
     } catch (error) {

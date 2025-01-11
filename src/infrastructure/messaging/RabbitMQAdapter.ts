@@ -38,19 +38,15 @@ export class RabbitMQAdapter implements MessageBroker {
       throw new Error('RabbitMQ channel not initialized');
     }
 
-    // Garante que a exchange existe
     await this.channel.assertExchange(topic, 'fanout', { durable: true });
 
-    // Cria uma fila exclusiva para este consumidor
     const { queue } = await this.channel.assertQueue('', { 
       exclusive: true,
       durable: true 
     });
 
-    // Vincula a fila à exchange
     await this.channel.bindQueue(queue, topic, '');
 
-    // Configura o consumidor
     this.channel.consume(queue, async (msg) => {
       if (msg) {
         try {
@@ -59,7 +55,6 @@ export class RabbitMQAdapter implements MessageBroker {
           this.channel?.ack(msg);
         } catch (error) {
           console.error('Error processing message:', error);
-          // Rejeita a mensagem e a recoloca na fila
           this.channel?.nack(msg, false, true);
         }
       }
