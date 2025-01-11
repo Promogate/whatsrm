@@ -1,60 +1,84 @@
-import 'express-async-errors';
-import express, { Express, NextFunction, Request, Response } from 'express';
-import { HttpServer, HttpRequest, HttpResponse } from '@core/ports/http/HttpServer';
-import cors from 'cors';
+import express, { Express, Request, Response, NextFunction, RequestHandler } from 'express';
+import { HttpServer, HttpRequest, HttpResponse, HttpMiddleware } from '@core/ports/http/HttpServer';
 
 export class ExpressAdapter implements HttpServer {
-  private app: Express; //Verificar o motivo de não aceitar Express como tipagem
+  private app: Express;
 
   constructor() {
     this.app = express();
     this.app.use(express.json());
-    this.app.use(cors({
-      origin: [process.env.ALLOWED_CORS_ORIGINS!]
-    }))
-    this.setupErrorHandler();
   }
 
   public on<T>(
     route: string,
     method: "get" | "post" | "put" | "patch",
-    handler: (request: HttpRequest) => Promise<HttpResponse>
+    handler: (request: HttpRequest) => Promise<HttpResponse>,
+    middlewares: HttpMiddleware[] = []
   ): void {
-    this.app[method](route, async (req: Request, res: Response) => {
+    const expressMiddlewares = middlewares.map(m => this.adaptMiddleware(m));
+    const expressHandler = this.adaptRoute(handler);
+
+    this.app[method](
+      route,
+      ...expressMiddlewares,
+      expressHandler
+    );
+  }
+
+  private adaptMiddleware(middleware: HttpMiddleware): RequestHandler {
+    return async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const httpRequest: HttpRequest = {
+        const httpRequest: HttpRequest & { user?: any; } = {
           body: req.body,
           params: req.params,
           query: req.query as Record<string, string>,
-          headers: req.headers as Record<string, string>
+          headers: req.headers as Record<string, string>,
+          user: (req as any).user
+        };
+
+        const result = await middleware.handle(httpRequest);
+
+        if (result) {
+          res.status(result.statusCode).json(result.body);
+          return;
+        }
+
+        if (httpRequest.user) {
+          (req as any).user = httpRequest.user;
+        }
+
+        next();
+      } catch (error) {
+        next(error);
+      }
+    };
+  }
+
+  private adaptRoute(handler: (request: HttpRequest) => Promise<HttpResponse>): RequestHandler {
+    return async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const httpRequest: HttpRequest & { user?: any; } = {
+          body: req.body,
+          params: req.params,
+          query: req.query as Record<string, string>,
+          headers: req.headers as Record<string, string>,
+          user: (req as any).user
         };
 
         const httpResponse = await handler(httpRequest);
 
-        res
-          .status(httpResponse.statusCode)
-          .set(httpResponse.headers || {})
-          .json(httpResponse.body);
+        res.status(httpResponse.statusCode).json(httpResponse.body);
       } catch (error) {
-        throw error;
+        next(error);
       }
-    });
+    };
   }
 
   public async listen(port: number): Promise<void> {
     return new Promise((resolve) => {
       this.app.listen(port, () => {
+        console.log(`Server running on port ${port}`);
         resolve();
-      });
-    });
-  }
-
-  private setupErrorHandler(): void {
-    this.app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
-      console.error('Error:', error);
-      res.status(500).json({
-        error: 'Internal Server Error',
-        message: error.message
       });
     });
   }

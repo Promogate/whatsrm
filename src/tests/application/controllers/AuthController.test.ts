@@ -2,11 +2,11 @@
 import { AuthController } from '@/application/controllers/AuthController';
 import { AuthenticateCustomerUseCase } from '@/core/auth/AuthenticateCustomerUseCase';
 import { ExpressAdapter } from '@/infrastructure/http/ExpressAdapter';
-import { HttpServer, HttpRequest } from '@core/ports/http/HttpServer';
+import { HttpRequest } from '@core/ports/http/HttpServer';
 import sinon from 'sinon';
 
 describe('AuthController', () => {
-  let httpServer: sinon.SinonStubbedInstance<HttpServer>;
+  let httpServer: sinon.SinonStubbedInstance<ExpressAdapter>;
   let authenticateCustomerUseCase: sinon.SinonStubbedInstance<AuthenticateCustomerUseCase>;
   let authController: AuthController;
 

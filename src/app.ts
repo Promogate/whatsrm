@@ -52,9 +52,6 @@ export class Application {
     try {
       const httpServer = this.serverConfig.getHttpServer();
       await httpServer.listen(this.port);
-
-      console.log(`Server running on port ${this.port}`);
-
     } catch (error) {
       console.error('Failed to start server:', error);
       process.exit(1);

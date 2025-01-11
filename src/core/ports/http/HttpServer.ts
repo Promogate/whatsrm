@@ -3,6 +3,7 @@ export interface HttpServer {
     route: string,
     method: "get" | "post" | "put" | "patch",
     handler: (request: HttpRequest) => Promise<HttpResponse>): void;
+    middleware?: HttpMiddleware[]
   listen(port: number): Promise<void>;
 }
 
@@ -17,4 +18,8 @@ export interface HttpResponse {
   statusCode: number;
   body: any;
   headers?: Record<string, string>;
+}
+
+export interface HttpMiddleware {
+  handle(request: HttpRequest): Promise<HttpResponse | void>;
 }
