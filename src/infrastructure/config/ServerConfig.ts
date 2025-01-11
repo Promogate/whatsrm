@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+dotenv.config();
 
 import { ExpressAdapter } from '@infrastructure/http/ExpressAdapter';
 import { RabbitMQAdapter } from '@infrastructure/messaging/RabbitMQAdapter';
