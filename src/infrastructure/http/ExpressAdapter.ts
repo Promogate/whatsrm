@@ -11,7 +11,7 @@ export class ExpressAdapter implements HttpServer {
 
   public on<T>(
     route: string,
-    method: "get" | "post" | "put" | "patch",
+    method: "get" | "post" | "put" | "patch" | "delete",
     handler: (request: HttpRequest) => Promise<HttpResponse>,
     middlewares: HttpMiddleware[] = []
   ): void {
