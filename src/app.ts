@@ -5,6 +5,10 @@ import { CustomerController } from '@/application/controllers/CustomerController
 import { JwtTokenService } from '@infrastructure/auth/auth/JwtTokenService';
 import { AuthenticateCustomerUseCase } from './core/auth/AuthenticateCustomerUseCase';
 import { AuthController } from '@application/controllers/AuthController';
+import { ContactController } from './application/controllers/ContactController';
+import { AuthMiddleware } from './infrastructure/http/AuthMiddleware';
+import { ContactUseCaseFactory } from './core/factories/ContactUseCaseFactory';
+import { FirestoreContactRepository } from './infrastructure/repositories/FirestoreContactRepository';
 
 export class Application {
   private readonly serverConfig: ServerConfig;
@@ -22,6 +26,7 @@ export class Application {
       const httpServer = this.serverConfig.getHttpServer();
 
       const customerRepository = new FirestoreCustomerRepository();
+      const contactRepository = new FirestoreContactRepository();
 
       const jwtTokenService = new JwtTokenService(
         process.env.JWT_SECRET!,
@@ -33,6 +38,8 @@ export class Application {
         customerRepository,
         jwtTokenService
       );
+      const contactUseCaseFactory = new ContactUseCaseFactory(contactRepository, customerRepository);
+      const authMiddleware = new AuthMiddleware(jwtTokenService);
 
       new AuthController(
         httpServer,
@@ -41,6 +48,14 @@ export class Application {
       new CustomerController(
         httpServer,
         createCustomerUseCase
+      );
+      new ContactController(
+        httpServer,
+        authMiddleware,
+        contactUseCaseFactory.createCreateContactUseCase(),
+        contactUseCaseFactory.createUpdateContactUseCase(),
+        contactUseCaseFactory.createManageContactTagsUseCase(),
+        contactUseCaseFactory.createFindContactsUseCase()
       );
     } catch (error) {
       console.error('Error setting up application:', error);
