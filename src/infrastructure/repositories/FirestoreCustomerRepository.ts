@@ -39,7 +39,36 @@ export class FirestoreCustomerRepository implements CustomerRepository {
 
       const doc = querySnapshot.docs[0];
       const data = doc.data();
-      
+
+      return Customer.reconstitute({
+        id: doc.id,
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        phone: data.phone || null,
+        createdAt: this.convertTimestampToDate(data.createdAt),
+        updatedAt: this.convertTimestampToDate(data.updatedAt)
+      });
+
+    } catch (error) {
+      console.error('Error finding customer by email:', error);
+      throw new Error('Failed to find customer');
+    }
+  }
+
+  async findById(customerId: string): Promise<Customer | null> {
+    try {
+      const customersRef = collection(db, this.collectionName);
+      const q = query(customersRef, where('customerId', '==', customerId));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        return null;
+      }
+
+      const doc = querySnapshot.docs[0];
+      const data = doc.data();
+
       return Customer.reconstitute({
         id: doc.id,
         name: data.name,
