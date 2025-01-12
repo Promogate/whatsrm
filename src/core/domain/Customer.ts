@@ -1,3 +1,4 @@
+import { generateNanoID } from '@/infrastructure/config/Nanoid';
 import bcrypt from 'bcrypt';
 
 interface CustomerProps {
@@ -67,7 +68,7 @@ export class Customer {
     const encryptedPassword = bcrypt.hashSync(props.password, 10)
 
     const customerProps: CustomerProps = {
-      id: crypto.randomUUID(),
+      id: generateNanoID(),
       name: props.name,
       email: props.email,
       password: encryptedPassword,
