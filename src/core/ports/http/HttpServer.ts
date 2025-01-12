@@ -1,9 +1,10 @@
 export interface HttpServer {
   on<T>(
     route: string,
-    method: "get" | "post" | "put" | "patch",
-    handler: (request: HttpRequest) => Promise<HttpResponse>): void;
+    method: "get" | "post" | "put" | "patch" | "delete",
+    handler: (request: HttpRequest) => Promise<HttpResponse>,
     middleware?: HttpMiddleware[]
+  ): void;
   listen(port: number): Promise<void>;
 }
 
