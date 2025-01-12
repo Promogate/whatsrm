@@ -1,10 +1,10 @@
-import { HttpRequest, HttpResponse } from '@core/ports/http/HttpServer';
+import { AuthenticatedRequest, HttpResponse } from '@core/ports/http/HttpServer';
 import { TokenService } from '@core/ports/auth/TokenService';
 
 export class AuthMiddleware {
   constructor(private readonly tokenService: TokenService) { }
 
-  async handle(request: HttpRequest & { user?: { userId: string, email: string; }; }): Promise<HttpResponse | void> {
+  async handle(request: AuthenticatedRequest): Promise<HttpResponse | void> {
     try {
       const authHeader = request.headers['authorization'];
 

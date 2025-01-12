@@ -1,4 +1,4 @@
-import { HttpServer, HttpRequest, HttpResponse, HttpMiddleware } from '@core/ports/http/HttpServer';
+import { HttpServer, HttpRequest, HttpResponse, HttpMiddleware, AuthenticatedRequest } from '@core/ports/http/HttpServer';
 import { CreateContact } from '@core/ports/usecases/contacts/CreateContact';
 import { UpdateContact } from '@core/ports/usecases/contacts/UpdateContact';
 import { ManageContactTags } from '@core/ports/usecases/contacts/ManageContactTags';
@@ -146,18 +146,34 @@ export class ContactController {
     }
   }
 
-  private async findContactsByCustomer(request: HttpRequest): Promise<HttpResponse> {
+  private async findContactsByCustomer(request: AuthenticatedRequest): Promise<HttpResponse> {
     try {
       const { customerId } = request.params;
+
+      if (customerId !== request.user?.userId) {
+        return {
+          statusCode: 403,
+          body: { error: 'Unauthorized access' }
+        };
+      }
+
       const contacts = await this.findContactsUseCase.findByCustomerId(customerId);
+
+      if (!contacts) {
+        return {
+          statusCode: 404,
+          body: { error: 'No contacts found' }
+        };
+      }
 
       return {
         statusCode: 200,
         body: contacts.map(contact => contact.toJSON())
       };
     } catch (error: any) {
+      const statusCode = error.statusCode || 400;
       return {
-        statusCode: 400,
+        statusCode,
         body: { error: error.message }
       };
     }

@@ -24,3 +24,10 @@ export interface HttpResponse {
 export interface HttpMiddleware {
   handle(request: HttpRequest): Promise<HttpResponse | void>;
 }
+
+export interface AuthenticatedRequest extends HttpRequest {
+  user?: {
+    userId: string;
+    email: string;
+  };
+}
