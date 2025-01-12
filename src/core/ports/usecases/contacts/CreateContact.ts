@@ -1,4 +1,4 @@
-import { Contact } from "@/core/domain/Contact";
+import { Contact } from "@/core/domain";
 
 export interface CreateContactDTO {
   whatsappId: string;
